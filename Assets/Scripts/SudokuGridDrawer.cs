@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts;
+using UnityEngine;
 
 public class SudokuGridDrawer : MonoBehaviour
 {
@@ -11,24 +12,37 @@ public class SudokuGridDrawer : MonoBehaviour
 
     void Start()
     {
-        InitializeEmptyBoard();
 
         sudokuBoard = new int[9, 9] {
-        {5, 3, 0, 0, 7, 0, 0, 0, 0},
-        {6, 0, 0, 1, 9, 5, 0, 0, 0},
-        {0, 9, 8, 0, 0, 0, 0, 6, 0},
-        {8, 0, 0, 0, 6, 0, 0, 0, 3},
-        {4, 0, 0, 8, 0, 3, 0, 0, 1},
-        {7, 0, 0, 0, 2, 0, 0, 0, 6},
-        {0, 6, 0, 0, 0, 0, 2, 8, 0},
-        {0, 0, 0, 4, 1, 9, 0, 0, 5},
-        {0, 0, 0, 0, 8, 0, 0, 7, 9}
-        };
+        {5,3,0, 0,7,0, 0,0,0},
+        {6,0,0, 1,9,5, 0,0,0},
+        {0,9,8, 0,0,0, 0,6,0},
 
-        TestSudokuValidator(); // Validator'ü test et
+        {8,0,0, 0,6,0, 0,0,3},
+        {4,0,0, 8,0,3, 0,0,1},
+        {7,0,0, 0,2,0, 0,0,6},
+
+        {0,6,0, 0,0,0, 2,8,0},
+        {0,0,0, 4,1,9, 0,0,5}, 
+        {0,0,0, 0,8,0, 0,7,9}
+        };
+        InitializeEmptyBoard();
+
+
+        bool solved = SudokuSolver.SolveSudoku(sudokuBoard);
+
+        if (solved)
+        {
+            Debug.Log("is solved!");
+        }
+        else
+        {
+            Debug.Log("Not solved!");
+        }
+
+        TestSudokuValidator();
     }
 
-    // Boş bir Sudoku tahtası oluştur (0'lar boş hücreyi temsil eder)
     void InitializeEmptyBoard()
     {
         for (int i = 0; i < 9; i++)
@@ -42,11 +56,9 @@ public class SudokuGridDrawer : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // Grid'in merkezini ayarla
         Vector3 gridCenter = transform.position;
         Gizmos.matrix = Matrix4x4.TRS(gridCenter, Quaternion.identity, Vector3.one);
 
-        // İnce çizgiler (her hücre için)
         Gizmos.color = gridColor;
         for (int i = 0; i <= 9; i++)
         {
@@ -63,17 +75,14 @@ public class SudokuGridDrawer : MonoBehaviour
             );
         }
 
-        // Kalın çizgiler (3x3 kutular için)
         Gizmos.color = thickGridColor;
         for (int i = 0; i <= 3; i++)
         {
-            // Dikey kalın çizgiler
             Gizmos.DrawCube(
                 new Vector3(i * 3 * cellSize - cellSize * 4.5f, 0, 0),
                 new Vector3(thickLineWidth, cellSize * 9, thickLineWidth)
             );
 
-            // Yatay kalın çizgiler
             Gizmos.DrawCube(
                 new Vector3(0, i * 3 * cellSize - cellSize * 4.5f, 0),
                 new Vector3(cellSize * 9, thickLineWidth, thickLineWidth)
